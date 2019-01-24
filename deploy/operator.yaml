@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: backup-operator
+  template:
+    metadata:
+      labels:
+        name: backup-operator
+    spec:
+      serviceAccountName: backup-operator
+      containers:
+        - name: backup-operator
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - backup-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "backup-operator"
